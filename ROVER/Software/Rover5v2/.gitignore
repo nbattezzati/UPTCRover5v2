@@ -1,0 +1,5 @@
+# Objects and executables
+*.elf
+*.map
+*.objdump
+obj/

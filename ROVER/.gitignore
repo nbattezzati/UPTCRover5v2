@@ -1,0 +1,13 @@
+# NIOS generation reports
+*.rpt
+*.done
+
+# Fitter reports
+*.fit.*
+
+# Analysis & Synthesis reports
+*.map.*
+*.pin
+
+# Timing analysis reports
+*.sta.*
