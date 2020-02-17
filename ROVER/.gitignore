@@ -11,3 +11,10 @@
 
 # Timing analysis reports
 *.sta.*
+
+# settings and temporary files
+.qsys_edit/
+db/
+*.jdi
+*.qws
+*.sof

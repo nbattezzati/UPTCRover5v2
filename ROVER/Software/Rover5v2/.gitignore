@@ -3,3 +3,8 @@
 *.map
 *.objdump
 obj/
+
+# Eclipse settings
+.project
+.cproject
+.settings/

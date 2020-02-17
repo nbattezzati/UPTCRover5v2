@@ -6,3 +6,8 @@ obj/
 
 # reports
 *.html
+
+# Eclipse settings
+.project
+.cproject
+.settings/
