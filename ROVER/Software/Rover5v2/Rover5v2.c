@@ -1,12 +1,12 @@
 /*********************************************************************************************
 **********************************************************************************************
 **																							**
-**  Autor		:	Andrï¿½s David Suï¿½rez Gï¿½mez												**
-**  Tutor		:	Wilson Javier Pï¿½rez Holguï¿½n												**
-**  Instituciï¿½n	: 	Universidad Pedagï¿½gica y Tecnolï¿½gica de Colombia (UPTC)					**
-**  Entidad		:	Grupo de Investigacion en Robï¿½tica y Automatizaciï¿½n Industrial (GIRA)	**
-**  Descripciï¿½n :	Cï¿½digo para el procesador NIOS II que comanda a un robot desarrollado	**
-**  				por el grupo de investigaciï¿½n GIRA con aplicaciï¿½n a robï¿½tica educativa	**
+**  Autor		:	Andrés David Suárez Gómez												**
+**  Tutor		:	Wilson Javier Pérez Holguín												**
+**  Institución	: 	Universidad Pedagógica y Tecnológica de Colombia (UPTC)					**
+**  Entidad		:	Grupo de Investigacion en Robótica y Automatización Industrial (GIRA)	**
+**  Descripción :	Código para el procesador NIOS II que comanda a un robot desarrollado	**
+**  				por el grupo de investigación GIRA con aplicación a robótica educativa	**
 **  				y Sistemas Multi-Robot.													**
 **  																						**
 **********************************************************************************************
@@ -107,7 +107,7 @@ unsigned long circdist = 0;
 
 /**************************
 ** Buffers UART para los **
-** sensores ultrasï¿½nicos **
+** sensores ultrasónicos **
 **************************/
 unsigned char buffer1[5];
 unsigned char buffer2[5];
@@ -127,7 +127,7 @@ unsigned char bufferxbee[1000];
 
 /**************************
 ** Apuntadores para los  **
-** sensores ultrasï¿½nicos **
+** sensores ultrasónicos **
 **************************/
 unsigned char puntero1 = 0;
 unsigned char puntero2 = 0;
@@ -172,11 +172,11 @@ void mensaje_xbee(char *mensaje);
 **																		**
 ** Function:    isrxbee()												**
 **																		**
-** Description: Funciï¿½n que lee lo que llega a la tarjeta XBee y llena  **
+** Description: Función que lee lo que llega a la tarjeta XBee y llena  **
 ** 				un buffer con estos datos. ISR							**
 ** 																		**
 ** Notes:       Cuando el buffer llega a 500 o se presiona ENTER, se 	**
-** 				llama la funciï¿½n anï¿½lisis() para determinar los 		**
+** 				llama la función análisis() para determinar los 		**
 ** 				comandos recibidos.										**
 **																		**
 ** Returns:     N/A														**
@@ -200,7 +200,7 @@ static void isrxbee (void * context, alt_u32 id){
 		punteroxbee = 0;
 	}
 	/**********************************************************************
-	** Llena el buffer de acuerdo a los valores que se estï¿½n recibiendo  **
+	** Llena el buffer de acuerdo a los valores que se están recibiendo  **
 	** en la tarjeta XBee												 **
 	**********************************************************************/
 	else{
@@ -214,10 +214,10 @@ static void isrxbee (void * context, alt_u32 id){
 **																		**
 ** Function:    isrdist1()												**
 **																		**
-** Description: Funciï¿½n que lee los valores de distancia del sensor 	**
+** Description: Función que lee los valores de distancia del sensor 	**
 ** 				ultrasonico 1 usando UART								**
 ** 																		**
-** Notes:       La comunicaciï¿½n del sensor es RS232, la salida es un 	**
+** Notes:       La comunicación del sensor es RS232, la salida es un 	**
 ** 				ASCII 'R', seguida de tres ASCII que representan el		**
 ** 				valor de la distancia en pulgadas y termina con un 		**
 ** 				ASCII 13 (CR o Enter). Baud=9600, 8 bits, sin paridad	**
@@ -253,10 +253,10 @@ static void isrdist1 (void * context, alt_u32 id){
 **																		**
 ** Function:    isrdist2()												**
 **																		**
-** Description: Funciï¿½n que lee los valores de distancia del sensor 	**
+** Description: Función que lee los valores de distancia del sensor 	**
 ** 				ultrasonico 2 usando UART								**
 ** 																		**
-** Notes:       La comunicaciï¿½n del sensor es RS232, la salida es un 	**
+** Notes:       La comunicación del sensor es RS232, la salida es un 	**
 ** 				ASCII 'R', seguida de tres ASCII que representan el		**
 ** 				valor de la distancia en pulgadas y termina con un 		**
 ** 				ASCII 13 (CR o Enter). Baud=9600, 8 bits, sin paridad	**
@@ -291,10 +291,10 @@ static void isrdist2 (void * context, alt_u32 id){
 **																		**
 ** Function:    isrdist3()												**
 **																		**
-** Description: Funciï¿½n que lee los valores de distancia del sensor 	**
+** Description: Función que lee los valores de distancia del sensor 	**
 ** 				ultrasonico 3 usando UART								**
 ** 																		**
-** Notes:       La comunicaciï¿½n del sensor es RS232, la salida es un 	**
+** Notes:       La comunicación del sensor es RS232, la salida es un 	**
 ** 				ASCII 'R', seguida de tres ASCII que representan el		**
 ** 				valor de la distancia en pulgadas y termina con un 		**
 ** 				ASCII 13 (CR o Enter). Baud=9600, 8 bits, sin paridad	**
@@ -329,10 +329,10 @@ static void isrdist3 (void * context, alt_u32 id){
 **																		**
 ** Function:    isrdist4()												**
 **																		**
-** Description: Funciï¿½n que lee los valores de distancia del sensor 	**
+** Description: Función que lee los valores de distancia del sensor 	**
 ** 				ultrasonico 4 usando UART								**
 ** 																		**
-** Notes:       La comunicaciï¿½n del sensor es RS232, la salida es un 	**
+** Notes:       La comunicación del sensor es RS232, la salida es un 	**
 ** 				ASCII 'R', seguida de tres ASCII que representan el		**
 ** 				valor de la distancia en pulgadas y termina con un 		**
 ** 				ASCII 13 (CR o Enter). Baud=9600, 8 bits, sin paridad	**
@@ -367,10 +367,10 @@ static void isrdist4 (void * context, alt_u32 id){
 **																		**
 ** Function:    isrdist5()												**
 **																		**
-** Description: Funciï¿½n que lee los valores de distancia del sensor 	**
+** Description: Función que lee los valores de distancia del sensor 	**
 ** 				ultrasonico 5 usando UART								**
 ** 																		**
-** Notes:       La comunicaciï¿½n del sensor es RS232, la salida es un 	**
+** Notes:       La comunicación del sensor es RS232, la salida es un 	**
 ** 				ASCII 'R', seguida de tres ASCII que representan el		**
 ** 				valor de la distancia en pulgadas y termina con un 		**
 ** 				ASCII 13 (CR o Enter). Baud=9600, 8 bits, sin paridad	**
@@ -405,10 +405,10 @@ static void isrdist5 (void * context, alt_u32 id){
 **																		**
 ** Function:    isrdist6()												**
 **																		**
-** Description: Funciï¿½n que lee los valores de distancia del sensor 	**
+** Description: Función que lee los valores de distancia del sensor 	**
 ** 				ultrasonico 6 usando UART								**
 ** 																		**
-** Notes:       La comunicaciï¿½n del sensor es RS232, la salida es un 	**
+** Notes:       La comunicación del sensor es RS232, la salida es un 	**
 ** 				ASCII 'R', seguida de tres ASCII que representan el		**
 ** 				valor de la distancia en pulgadas y termina con un 		**
 ** 				ASCII 13 (CR o Enter). Baud=9600, 8 bits, sin paridad	**
@@ -443,10 +443,10 @@ static void isrdist6 (void * context, alt_u32 id){
 **																		**
 ** Function:    isrdist7()												**
 **																		**
-** Description: Funciï¿½n que lee los valores de distancia del sensor 	**
+** Description: Función que lee los valores de distancia del sensor 	**
 ** 				ultrasonico 7 usando UART								**
 ** 																		**
-** Notes:       La comunicaciï¿½n del sensor es RS232, la salida es un 	**
+** Notes:       La comunicación del sensor es RS232, la salida es un 	**
 ** 				ASCII 'R', seguida de tres ASCII que representan el		**
 ** 				valor de la distancia en pulgadas y termina con un 		**
 ** 				ASCII 13 (CR o Enter). Baud=9600, 8 bits, sin paridad	**
@@ -481,10 +481,10 @@ static void isrdist7 (void * context, alt_u32 id){
 **																		**
 ** Function:    isrdist8()												**
 **																		**
-** Description: Funciï¿½n que lee los valores de distancia del sensor 	**
+** Description: Función que lee los valores de distancia del sensor 	**
 ** 				ultrasonico 8 usando UART								**
 ** 																		**
-** Notes:       La comunicaciï¿½n del sensor es RS232, la salida es un 	**
+** Notes:       La comunicación del sensor es RS232, la salida es un 	**
 ** 				ASCII 'R', seguida de tres ASCII que representan el		**
 ** 				valor de la distancia en pulgadas y termina con un 		**
 ** 				ASCII 13 (CR o Enter). Baud=9600, 8 bits, sin paridad	**
@@ -519,7 +519,7 @@ static void isrdist8 (void * context, alt_u32 id){
 **																		**
 ** Function:    irqkey()												**
 **																		**
-** Description: Funciï¿½n que define la interrupciï¿½n de los pulsadores 	**
+** Description: Función que define la interrupción de los pulsadores 	**
 ** 				de la tarjeta DE0 Nano									**
 ** 																		**
 ** Notes:       N/A														**
@@ -540,12 +540,12 @@ static void irqkey (void * context, alt_u32 id){
 **																		**
 ** Function:    irqencoders()											**
 **																		**
-** Description: Funciï¿½n que define la interrupciï¿½n de los encoders de 	**
-** 				la plataforma ROVER 5, la versiï¿½n que se usa tiene 		**
+** Description: Función que define la interrupción de los encoders de 	**
+** 				la plataforma ROVER 5, la versión que se usa tiene 		**
 ** 				cuatro encoders de cuadratura							**
 ** 																		**
 ** Notes:       Al tener cuatro encoders de cuadratura se puede 		**
-** 				determinar la direcciï¿½n de giro de las llantas			**
+** 				determinar la dirección de giro de las llantas			**
 **																		**
 ** Returns:     N/A														**
 **																		**
@@ -559,7 +559,7 @@ static void irqencoders (void * context, alt_u32 id){
 
 	/*********************************************************************
 	** Multiplica el valor por 0001 para eliminar los valores de los	**
-	** demï¿½s encoders, luego determina el sentido y aumenta encoder1,	**
+	** demás encoders, luego determina el sentido y aumenta encoder1,	**
 	** esta valiable que cuenta el numero de pulsos que se obtienen del	**
 	** sensor para medir la distancia recorrida por la llanta			**
 	*********************************************************************/
@@ -581,7 +581,7 @@ static void irqencoders (void * context, alt_u32 id){
 
 	/*********************************************************************
 	** Multiplica el valor por 0010 para eliminar los valores de los	**
-	** demï¿½s encoders, luego determina el sentido y aumenta encoder2,	**
+	** demás encoders, luego determina el sentido y aumenta encoder2,	**
 	** esta valiable que cuenta el numero de pulsos que se obtienen del	**
 	** sensor para medir la distancia recorrida por la llanta			**
 	*********************************************************************/
@@ -603,7 +603,7 @@ static void irqencoders (void * context, alt_u32 id){
 
 	/*********************************************************************
 	** Multiplica el valor por 0100 para eliminar los valores de los	**
-	** demï¿½s encoders, luego determina el sentido y aumenta encoder3,	**
+	** demás encoders, luego determina el sentido y aumenta encoder3,	**
 	** esta valiable que cuenta el numero de pulsos que se obtienen del	**
 	** sensor para medir la distancia recorrida por la llanta			**
 	*********************************************************************/
@@ -623,7 +623,7 @@ static void irqencoders (void * context, alt_u32 id){
 
 	/*********************************************************************
 	** Multiplica el valor por 1000 para eliminar los valores de los	**
-	** demï¿½s encoders, luego determina el sentido y aumenta encoder4,	**
+	** demás encoders, luego determina el sentido y aumenta encoder4,	**
 	** esta valiable que cuenta el numero de pulsos que se obtienen del	**
 	** sensor para medir la distancia recorrida por la llanta			**
 	*********************************************************************/
@@ -651,9 +651,9 @@ static void irqencoders (void * context, alt_u32 id){
 **																		**
 ** Function:    main()													**
 **																		**
-** Description: Funciï¿½n principal del robot mï¿½vil						**
+** Description: Función principal del robot móvil						**
 ** 																		**
-** Notes:       En esta funciï¿½n se hacen los llamados a las demas 		**
+** Notes:       En esta función se hacen los llamados a las demas 		**
 **              funciones del sistema de acuerdo a las tareas del robot	**
 **																		**
 ** Returns:     N/A														**
@@ -761,34 +761,33 @@ int main(){
 		/*********************************************************
 		** Manejo del robot por medio de XBee, al presionar la	**
 		** tecla correspondiente el robot se mueve en alguna 	**
-		** direcciï¿½n especï¿½fica indefinidamente					**
+		** dirección específica indefinidamente					**
 		*********************************************************/
-		/*
-		if (entradaxbee == 'w'){
+		/*if (entradaxbee == 'w'){
 			IOWR(MOTORES_BASE,0,ADELANTE);
 			IOWR(PWM2_BASE,0,220);
 			IOWR(PWM1_BASE,0,200);
 			//mensaje_xbee(recibido);
 		}
-		else if (entradaxbee == 's'){
+		if (entradaxbee == 's'){
 			IOWR(MOTORES_BASE,0,ATRAS);
 			IOWR(PWM2_BASE,0,255);
 			IOWR(PWM1_BASE,0,255);
 			//mensaje_xbee(recibido);
 		}
-		else if (entradaxbee == 'a'){
+		if (entradaxbee == 'a'){
 			IOWR(MOTORES_BASE,0,IZQUIERDA);
 			IOWR(PWM2_BASE,0,255);
 			IOWR(PWM1_BASE,0,255);
 			mensaje_xbee(recibido);
 		}
-		else if (entradaxbee == 'd'){
+		if (entradaxbee == 'd'){
 			IOWR(MOTORES_BASE,0,DERECHA);
 			IOWR(PWM2_BASE,0,255);
 			IOWR(PWM1_BASE,0,255);
 			//mensaje_xbee(recibido);
 		}
-		else {
+		if (entradaxbee == ' '){
 			IOWR(MOTORES_BASE,0,0);					// quieto
 			IOWR(PWM1_BASE,0,0);
 			IOWR(PWM2_BASE,0,0);
@@ -799,7 +798,7 @@ int main(){
 		** Prueba de control on/off para desplazamiento del 	**
 		** robot en una distancia determinada				 	**
 		*********************************************************/
-		if (y >= 1){
+		/*if (y >= 1){
 			IOWR(PWM2_BASE,0,0);
 			IOWR(PWM1_BASE,0,0);
 		} else {
@@ -808,7 +807,7 @@ int main(){
 			IOWR(PWM1_BASE,0,150);
 
 		}
-
+		*/
 		//IOWR(MOTORES_BASE,0,ADELANTE);
 		//IOWR(PWM2_BASE,0,200);
 		//IOWR(PWM1_BASE,0,200);
@@ -821,25 +820,26 @@ int main(){
 			IOWR(PWM2_BASE,0,170);
 			IOWR(PWM1_BASE,0,255);
 		}*/
-		IOWR(LED_BASE,0,255);
+		//IOWR(LED_BASE,0,255);
 		//IOWR(MOTORES_BASE,0,ADELANTE);
 		//IOWR(PWM2_BASE,0,170);
 		//IOWR(PWM1_BASE,0,255);
 
-		//IOWR(MOTORES_BASE,0,ADELANTE);
-		//IOWR(PWM2_BASE,0,200);
-		//IOWR(PWM1_BASE,0,200);
-		/*
+		IOWR(MOTORES_BASE,0,ADELANTE);
+		IOWR(PWM2_BASE,0,255);
+		IOWR(PWM1_BASE,0,255);
+
 		/*************************************************
 		** Prueba de lectura de valores de los sensores	**
 		** ultrasonicos y los encoders del robot		**
 		**************************************************/
-		if(sensordist1<=310){
+		/*if(sensordist1<=310){
 			IOWR(MOTORES_BASE,0,0);
 			IOWR(PWM2_BASE,0,0);
 			IOWR(PWM1_BASE,0,0);
 			mensaje_xbee(recibido);
 		}
+		*/
 		/*
 		if (left_encoder_1 >= 250 || left_encoder_2 >= 250 || right_encoder_1 >= 250 || right_encoder_2 >= 250){
 			IOWR(MOTORES_BASE,0,0);
@@ -853,11 +853,11 @@ int main(){
 		printf("Valor encoders izquierda 1: %ld \n ",left_encoder_1);
 		printf("Valor encoders izquierda 2: %ld \n ",left_encoder_2);
 		*/
-		printf("right ticks %ld \n ",right_ticks);
+		/*printf("right ticks %ld \n ",right_ticks);
 		printf("left ticks %ld \n ",left_ticks);
 		printf("x: %f \n ",x);
 		printf("y: %f \n ",y);
-		printf("theta: %f \n ", theta);
+		printf("theta: %f \n ", theta);*/
 	}
 	return 0;
 }
@@ -962,9 +962,9 @@ float PIDControl (float e, float Kp, float Ki, float Kd){
 **																		**
 ** Function:    interrupciones()										**
 **																		**
-** Description: Funciï¿½n donde se definen las interrupciones 			**
+** Description: Función donde se definen las interrupciones 			**
 ** 																		**
-** Notes:       En esta funciï¿½n se definen interrupciones asociadas con **
+** Notes:       En esta función se definen interrupciones asociadas con **
 ** 				los encoders, la tarjeta XBee, el GPS y los sensores de **
 ** 				distancia												**
 **																		**
@@ -1033,10 +1033,10 @@ void interrupciones() {
 **																		**
 ** Function:    mensaje_xbee()											**
 **																		**
-** Description: Funciï¿½n donde hace el envï¿½o de un mensaje por medio de 	**
+** Description: Función donde hace el envío de un mensaje por medio de 	**
 ** 				la tarjeta XBee											**
 ** 																		**
-** Notes:       En esta funciï¿½n se define un char *mensaje, en donde	**
+** Notes:       En esta función se define un char *mensaje, en donde	**
 ** 				mensaje es un apuntador que recorre los caracteres del 	**
 ** 				mensaje que se quiere enviar.							**
 **																		**
@@ -1058,10 +1058,10 @@ void mensaje_xbee(char *mensaje){
 **																		**
 ** Function:    moveForward()											**
 **																		**
-** Description: Funciï¿½n para mover el robot en lï¿½nea recta hacia	 	**
+** Description: Función para mover el robot en línea recta hacia	 	**
 ** 				adelante a una velocidad constante						**
 ** 																		**
-** Notes:       En esta funciï¿½n se se define un char *mensaje, en donde	**
+** Notes:       En esta función se se define un char *mensaje, en donde	**
 ** 				mensaje es un apuntador que recorre los caracteres del 	**
 ** 				mensaje que se quiere enviar.							**
 **																		**
@@ -1070,10 +1070,5 @@ void mensaje_xbee(char *mensaje){
 **************************************************************************
 *************************************************************************/
 void moveForward(float distance, float velocity){
-	float initialDistance = x;
-	while (initialDistance - x < distance){
-		IOWR(MOTORES_BASE,0,ADELANTE);
-		IOWR(PWM2_BASE,0,velocity);
-		IOWR(PWM1_BASE,0,velocity);
-	}
+	
 }
