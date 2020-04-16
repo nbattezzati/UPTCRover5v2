@@ -1,7 +1,0 @@
-
-**** Clean-only build of configuration Nios II for project Rover5_FreeRTOS ****
-
-make clean 
-[Rover5_FreeRTOS clean complete]
-
-**** Build Finished ****
