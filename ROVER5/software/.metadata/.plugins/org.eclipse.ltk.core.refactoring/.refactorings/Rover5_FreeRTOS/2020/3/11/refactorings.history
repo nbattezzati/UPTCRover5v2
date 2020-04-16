@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;Rover5_FreeRTOS/hello_world.c&apos; to &apos;Rover5_FreeRTOS.c&apos;" description="Rename resource &apos;hello_world.c&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="hello_world.c" name="Rover5_FreeRTOS.c" stamp="1584120170235" updateReferences="true"/>
+</session>

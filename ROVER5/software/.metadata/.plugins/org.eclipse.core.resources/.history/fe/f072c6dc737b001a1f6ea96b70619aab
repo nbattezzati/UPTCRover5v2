@@ -1,0 +1,22 @@
+/*
+ * rover_control.h
+ *
+ *  Created on: 2/04/2020
+ *      Author: andre
+ */
+
+#ifndef ROVER_CONTROL_H_
+#define ROVER_CONTROL_H_
+
+extern signed long left_encoder_1, left_encoder_2, right_encoder_1, right_encoder_2;
+
+// FUNCTION: TaskControl()
+// Description: main task of the control module.
+//              It control the motion of the robot
+// Parameters:  - pvParameters: pointer to task parameters (pass NULL, not used)
+// Return:      -
+void RoverTaskControl(void *pvParameters);
+
+
+
+#endif /* ROVER_CONTROL_H_ */
