@@ -2,13 +2,13 @@
 <sch:Settings xmlns:sch="http://www.altera.com/embeddedsw/bsp/schema">
         <BspType>hal</BspType>
         <BspVersion>default</BspVersion>
-        <BspGeneratedTimeStamp>18-apr-2020 10.33.08</BspGeneratedTimeStamp>
-        <BspGeneratedUnixTimeStamp>1587198788460</BspGeneratedUnixTimeStamp>
+        <BspGeneratedTimeStamp>18-apr-2020 10.56.10</BspGeneratedTimeStamp>
+        <BspGeneratedUnixTimeStamp>1587200170802</BspGeneratedUnixTimeStamp>
         <BspGeneratedLocation>C:\Users\nbattezzati\Documents\battezzati\robotics\UPTCRover5v2\ROVER5\software\Rover5_FreeRTOS_bsp</BspGeneratedLocation>
         <BspSettingsFile>settings.bsp</BspSettingsFile>
         <SopcDesignFile>..\..\NiosII.sopcinfo</SopcDesignFile>
         <JdiFile>default</JdiFile>
-        <Cpu>CPU
+        <Cpu>CPU</Cpu>
         <SchemaVersion>1.9</SchemaVersion>
         <Setting>
                 <SettingName>hal.sys_clk_timer</SettingName>
