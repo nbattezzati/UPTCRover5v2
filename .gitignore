@@ -51,14 +51,10 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
-ROVER5/.qsys_edit/layout.xml
+ROVER5/.qsys_edit/
 ROVER5/NiosII.html
 ROVER5/NiosII.sopcinfo
-ROVER5/NiosII/synthesis/NiosII.debuginfo
-ROVER5/NiosII/synthesis/NiosII.qip
-ROVER5/NiosII/synthesis/NiosII.v
-ROVER5/NiosII/synthesis/submodules/NiosII_mm_interconnect_0.v
-ROVER5/NiosII/synthesis/submodules/NiosII_sys_id.v
+ROVER5/NiosII/synthesis/
 ROVER5/ROVER5.done
 ROVER5/ROVER5.qws
 ROVER5/db/.cmp.kpt
