@@ -100,10 +100,10 @@ ACDS_VERSION := 13.1
 
 # This following BUILD_NUMBER comment indicates the build number of the tool 
 # used to generate this makefile. 
-# BUILD_NUMBER: 182
+# BUILD_NUMBER: 162
 
 SETTINGS_FILE := settings.bsp
-SOPC_FILE := C:/UPTCRover5v2/ROVER5/NiosII.sopcinfo
+SOPC_FILE := ../../NiosII.sopcinfo
 
 #-------------------------------------------------------------------------------
 #                             TOOL & COMMAND DEFINITIONS
