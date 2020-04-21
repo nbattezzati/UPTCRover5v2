@@ -70,26 +70,35 @@ QueueHandle_t tx_queue_ = NULL;
 
 // FUNCTION: String2Msg()
 // Description: function to create a comm_msg_t from a string of characters
-uint8_t String2Msg(const char * str, int8_t len, comm_msg_t * msg)
+uint8_t String2Msg(const char * str, uint8_t len, comm_msg_t * msg)
 {
-	uint8_t ret_val = 0;
+	uint8_t target_len = 0;
 	int i = 0;
 
 	// check if the output message structure is not NULL
 	if (msg != NULL) {
-		// copy bytes from the string to the message buffer
-		for (i=0; i<len && i<COMM_MAX_MSG_SIZE; ++i) {
-			msg->buf[i] = str[i];
+		target_len = (len < COMM_MAX_MSG_SIZE ? len : COMM_MAX_MSG_SIZE) + 1;
+		if ((msg->buf = malloc(target_len)) != NULL) {
+			// copy bytes from the string to the message buffer
+			for (i=0; i<len && i<COMM_MAX_MSG_SIZE; ++i) {
+				msg->buf[i] = str[i];
+			}
+			// set the last character to end the string
+			msg->buf[i] = '\0';
+			// set message length
+			msg->len = target_len;
+
+			printf("[DEBUG] String2Msg: len=%d, msg=%s\n", msg->len, msg->buf);
 		}
-		// set the last carriage return
-		msg->buf[i] = '\r';
-		// set message length
-		msg->len = (len < COMM_MAX_MSG_SIZE ? len : COMM_MAX_MSG_SIZE) + 1;
-		// set the return value
-		ret_val = msg->len;
+		else {
+			printf("[ERR] failed to allocate memory for msg buffer\n");
+		}
+	}
+	else {
+		printf("[ERR]: String2Msg: msg pointer is NULL\n");
 	}
 
-	return ret_val;
+	return target_len;
 }
 
 
@@ -97,22 +106,24 @@ uint8_t String2Msg(const char * str, int8_t len, comm_msg_t * msg)
 // Description: function to send a message over the RF channel to a specific recipient
 int8_t RoverSendMsg(uint8_t to, const comm_msg_t * msg)
 {
-	comm_msg_t tmp_msg;
 	uint8_t ret_val = 0;
 
 	// check if the queue exists
-	if (tx_queue_ == NULL) {
-		ret_val = COMM_ERR_OUT_OF_MEMORY;
-	}
-	else {
+	if (tx_queue_ != NULL) {
 		// lock the mutex to be sure that nobody else is using the queue
 		xSemaphoreTake(tx_queue_mutex_, portMAX_DELAY);
 		// queue the message if the queue is not full
-		if (xQueueSendToBack(tx_queue_, &tmp_msg, 0) == errQUEUE_FULL) {
+		printf("[DEBUG] sending msg to queue: len=%d, msg=%s\n", msg->len, msg->buf);
+		if (xQueueSend(tx_queue_, &msg, 0) != pdTRUE) {
+			printf("[ERR] Failed to send message to queue\n");
 			ret_val = COMM_ERR_QUEUE_FULL;
 		}
 		// release the mutex
 		xSemaphoreGive(tx_queue_mutex_);
+	}
+	else {
+		printf("[ERR] Cannot send message to a NULL queue\n");
+		ret_val = COMM_ERR_OUT_OF_MEMORY;
 	}
 
 	return ret_val;
@@ -134,35 +145,51 @@ void RoverTaskComm(void *pvParameters)
 	TickType_t last_wakeup_time = 0;
 	int uart_fd = 0;
 	comm_msg_t tx_msg;
+	bool msg_valid = true;
 
 
 	// Initialize the last_wakeup_time variable with the current time.
 	last_wakeup_time = xTaskGetTickCount();
 
 	// initialize the internal resources
-	tx_queue_mutex_ = xSemaphoreCreateMutex();
-	tx_queue_ = xQueueCreate(MAX_QUEUE_LEN, sizeof(comm_msg_t));
-
-	// open the XBEE UART device
-	if ((uart_fd = open("/dev/XBEE",O_RDWR)) < 0) {
-		fprintf(stderr, "[ERR] Failed to open the XBee serial port\n");
+	if ((tx_queue_mutex_ = xSemaphoreCreateMutex()) == NULL) {
+		printf("[ERR] failed to create TX queue Mutex\n");
+	}
+	else {
+		if ((tx_queue_ = xQueueCreate(MAX_QUEUE_LEN, sizeof(comm_msg_t))) == NULL) {
+			printf("[ERR] failed to create TX queue\n");
+		}
+		else {
+			// open the XBEE UART device
+			if ((uart_fd = open("/dev/XBEE",O_RDWR)) < 0) {
+				fprintf(stderr, "[ERR] Failed to open the XBee serial port\n");
+			}
+		}
 	}
 
 	// start the task
 	while(1)
 	{
 		// loop over the messages to be sent
-		while (uxQueueMessagesWaiting(tx_queue_) > 0) {
+		while ((tx_queue_ != NULL) && (uxQueueMessagesWaiting(tx_queue_) > 0)) {
+			msg_valid = true;
 			// get a message from the queue
 			xSemaphoreTake(tx_queue_mutex_, portMAX_DELAY);
-			xQueueReceive(tx_queue_, &tx_msg, 0);
+			if (xQueueReceive(tx_queue_, &tx_msg, 0) == pdTRUE) {
+				msg_valid = false;
+				printf("[ERR] Failed to receive msg from TX queue\n");
+			}
 			xSemaphoreGive(tx_queue_mutex_);
 
 			// write the message to the UART
-			printf("[DEBUG] writing message to UART\n");
-			write(uart_fd, tx_msg.buf, tx_msg.len);
+			if (msg_valid == true) {
+				printf("[DEBUG] writing message to UART: len=%d, msg=%s\n", tx_msg.len, tx_msg.buf);
+				write(uart_fd, tx_msg.buf, tx_msg.len);
+				// release the memory for the buffer holding the message
+				free(tx_msg.buf);
 
-			// TODO: send the command to immediately transmit the message
+				// TODO: send the command to immediately transmit the message
+			}
 		}
 
 		// Wait for the next cycle.

@@ -21,7 +21,7 @@
 
 typedef struct {
 	uint8_t len;
-	uint8_t buf[COMM_MAX_MSG_SIZE];
+	uint8_t *buf;
 } comm_msg_t;
 
 // FUNCTION: String2Msg()
@@ -30,7 +30,7 @@ typedef struct {
 //              - len: length of the string (max=COMM_MAX_MSG_SIZE chars. Characters in excess will be truncated)
 //              - msg: pointer to a comm_msg_t that will be filled with the message
 // Return:      number of characters copied into the message. If any error occurs return 0
-uint8_t String2Msg(const char * str, int8_t len, comm_msg_t * msg);
+uint8_t String2Msg(const char * str, uint8_t len, comm_msg_t * msg);
 
 // FUNCTION: RoverSendMsg()
 // Description: function to send a message over the RF channel to a specific recipient
