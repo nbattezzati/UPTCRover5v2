@@ -174,7 +174,7 @@ void RoverTaskComm(void *pvParameters)
 			msg_valid = true;
 			// get a message from the queue
 			xSemaphoreTake(tx_queue_mutex_, portMAX_DELAY);
-			if (xQueueReceive(tx_queue_, &tx_msg, 0) == pdTRUE) {
+			if (xQueueReceive(tx_queue_, &tx_msg, 0) != pdTRUE) {
 				msg_valid = false;
 				printf("[ERR] Failed to receive msg from TX queue\n");
 			}
