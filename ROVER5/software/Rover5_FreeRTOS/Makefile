@@ -120,7 +120,7 @@ endif # COMSPEC
 #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 
 #START GENERATED
-ACTIVE_BUILD_CONFIG := Debug
+ACTIVE_BUILD_CONFIG := Release
 BUILD_CONFIGS += Release
 BUILD_CONFIGS += Debug
 include $(ACTIVE_BUILD_CONFIG)_config.mk
