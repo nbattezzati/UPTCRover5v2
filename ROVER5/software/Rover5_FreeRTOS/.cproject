@@ -8,7 +8,7 @@
 		</buildSystem>
 		<cconfiguration id="preference.org.eclipse.cdt.managedbuilder.core.configurationDataProvider.2069393839">
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration buildProperties="" description="" id="preference.org.eclipse.cdt.managedbuilder.core.configurationDataProvider.2069393839" name="Nios II" parent="org.eclipse.cdt.build.core.prefbase.cfg">
+				<configuration artifactName="Rover5_FreeRTOS" buildProperties="" description="" id="preference.org.eclipse.cdt.managedbuilder.core.configurationDataProvider.2069393839" name="Nios II" parent="org.eclipse.cdt.build.core.prefbase.cfg">
 					<folderInfo id="preference.org.eclipse.cdt.managedbuilder.core.configurationDataProvider.2069393839." name="/" resourcePath="">
 						<toolChain id="altera.nios2.mingw.gcc4.794784464" name="MinGW Nios II GCC4" superClass="altera.nios2.mingw.gcc4">
 							<targetPlatform id="altera.nios2.mingw.gcc4.153104623" name="Nios II" superClass="altera.nios2.mingw.gcc4"/>
@@ -66,8 +66,8 @@
 									<listOptionValue builtIn="false" value="__UINT_FAST8_MAX__"/>
 									<listOptionValue builtIn="false" value="__DEC64_MAX_EXP__"/>
 									<listOptionValue builtIn="false" value="__GXX_MERGED_TYPEINFO_NAMES"/>
-									<listOptionValue builtIn="false" value="__INT16_MAX__"/>
 									<listOptionValue builtIn="false" value="__UINT16_C(c)"/>
+									<listOptionValue builtIn="false" value="__INT16_MAX__"/>
 									<listOptionValue builtIn="false" value="__LDBL_MAX_EXP__"/>
 									<listOptionValue builtIn="false" value="__UINT_LEAST64_MAX__"/>
 									<listOptionValue builtIn="false" value="__FLT_MANT_DIG__"/>
@@ -230,6 +230,7 @@
 									<listOptionValue builtIn="false" value="__WCHAR_TYPE__"/>
 									<listOptionValue builtIn="false" value="__CHAR16_TYPE__"/>
 								</option>
+								<option id="gnu.cpp.compiler.option.preprocessor.def.1602036999" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.cygwin.1704346487" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input.cygwin"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.cygwin.base.1856636259" name="Cygwin C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.cygwin.base">
@@ -281,8 +282,8 @@
 									<listOptionValue builtIn="false" value="__UINT_FAST8_MAX__"/>
 									<listOptionValue builtIn="false" value="__DEC64_MAX_EXP__"/>
 									<listOptionValue builtIn="false" value="__GXX_MERGED_TYPEINFO_NAMES"/>
-									<listOptionValue builtIn="false" value="__INT16_MAX__"/>
 									<listOptionValue builtIn="false" value="__UINT16_C(c)"/>
+									<listOptionValue builtIn="false" value="__INT16_MAX__"/>
 									<listOptionValue builtIn="false" value="__LDBL_MAX_EXP__"/>
 									<listOptionValue builtIn="false" value="__UINT_LEAST64_MAX__"/>
 									<listOptionValue builtIn="false" value="__FLT_MANT_DIG__"/>
@@ -328,8 +329,8 @@
 									<listOptionValue builtIn="false" value="__INT_FAST16_MAX__"/>
 									<listOptionValue builtIn="false" value="__UINT16_MAX__"/>
 									<listOptionValue builtIn="false" value="__UINT_LEAST8_TYPE__"/>
-									<listOptionValue builtIn="false" value="__UINT_FAST32_TYPE__"/>
 									<listOptionValue builtIn="false" value="unix"/>
+									<listOptionValue builtIn="false" value="__UINT_FAST32_TYPE__"/>
 									<listOptionValue builtIn="false" value="__stdcall"/>
 									<listOptionValue builtIn="false" value="__FLT_EVAL_METHOD__"/>
 									<listOptionValue builtIn="false" value="_X86_"/>
@@ -438,6 +439,7 @@
 									<listOptionValue builtIn="false" value="__WCHAR_TYPE__"/>
 									<listOptionValue builtIn="false" value="__CHAR16_TYPE__"/>
 								</option>
+								<option id="gnu.c.compiler.option.preprocessor.def.symbols.703271962" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols"/>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.cygwin.263255905" superClass="cdt.managedbuild.tool.gnu.c.compiler.input.cygwin"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.cygwin.base.1791446114" name="Cygwin C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.cygwin.base"/>
@@ -468,15 +470,6 @@
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
 		<project id="Rover5_FreeRTOS.null.1559840626" name="Rover5_FreeRTOS"/>
 	</storageModule>
-	<storageModule moduleId="scannerConfiguration">
-		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		<scannerConfigBuildInfo instanceId="preference.org.eclipse.cdt.managedbuilder.core.configurationDataProvider.2069393839;preference.org.eclipse.cdt.managedbuilder.core.configurationDataProvider.2069393839.;cdt.managedbuild.tool.gnu.c.compiler.cygwin.base.1856636259;cdt.managedbuild.tool.gnu.c.compiler.input.cygwin.263255905">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfileC"/>
-		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="preference.org.eclipse.cdt.managedbuilder.core.configurationDataProvider.2069393839;preference.org.eclipse.cdt.managedbuilder.core.configurationDataProvider.2069393839.;cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.base.1272810610;cdt.managedbuild.tool.gnu.cpp.compiler.input.cygwin.1704346487">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfileCPP"/>
-		</scannerConfigBuildInfo>
-	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets">
 		<buildTargets>
 			<target name="mem_init_install" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
@@ -504,5 +497,34 @@
 				<runAllBuilders>false</runAllBuilders>
 			</target>
 		</buildTargets>
+	</storageModule>
+	<storageModule moduleId="refreshScope" versionNumber="1">
+		<resource resourceType="PROJECT" workspacePath="/Rover5_FreeRTOS"/>
+	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings">
+		<doc-comment-owner id="org.eclipse.cdt.internal.ui.text.doctools.NullDocCommentOwner">
+			<path value=""/>
+		</doc-comment-owner>
+	</storageModule>
+	<storageModule moduleId="scannerConfiguration">
+		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		<scannerConfigBuildInfo instanceId="preference.org.eclipse.cdt.managedbuilder.core.configurationDataProvider.2069393839;preference.org.eclipse.cdt.managedbuilder.core.configurationDataProvider.2069393839.;cdt.managedbuild.tool.gnu.c.compiler.cygwin.base.1856636259;cdt.managedbuild.tool.gnu.c.compiler.input.cygwin.263255905">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfileC"/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="preference.org.eclipse.cdt.managedbuilder.core.configurationDataProvider.2069393839.1598659403;preference.org.eclipse.cdt.managedbuilder.core.configurationDataProvider.2069393839.1598659403.;cdt.managedbuild.tool.gnu.c.compiler.cygwin.base.1332811573;cdt.managedbuild.tool.gnu.c.compiler.input.cygwin.2071132707">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfileC"/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="preference.org.eclipse.cdt.managedbuilder.core.configurationDataProvider.2069393839.1598659403;preference.org.eclipse.cdt.managedbuilder.core.configurationDataProvider.2069393839.1598659403.;cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.base.447091262;cdt.managedbuild.tool.gnu.cpp.compiler.input.cygwin.1546423293">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfileCPP"/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="preference.org.eclipse.cdt.managedbuilder.core.configurationDataProvider.2069393839.302736044;preference.org.eclipse.cdt.managedbuilder.core.configurationDataProvider.2069393839.302736044.;cdt.managedbuild.tool.gnu.c.compiler.cygwin.base.510194617;cdt.managedbuild.tool.gnu.c.compiler.input.cygwin.1263518319">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfileC"/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="preference.org.eclipse.cdt.managedbuilder.core.configurationDataProvider.2069393839;preference.org.eclipse.cdt.managedbuilder.core.configurationDataProvider.2069393839.;cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.base.1272810610;cdt.managedbuild.tool.gnu.cpp.compiler.input.cygwin.1704346487">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfileCPP"/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="preference.org.eclipse.cdt.managedbuilder.core.configurationDataProvider.2069393839.302736044;preference.org.eclipse.cdt.managedbuilder.core.configurationDataProvider.2069393839.302736044.;cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.base.1762314527;cdt.managedbuild.tool.gnu.cpp.compiler.input.cygwin.1898368095">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfileCPP"/>
+		</scannerConfigBuildInfo>
 	</storageModule>
 </cproject>

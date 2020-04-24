@@ -28,6 +28,17 @@
 #ifndef FREERTOS_CONFIG_H
 #define FREERTOS_CONFIG_H
 
+// This macro is a hack used in Release mode (when the app runs directly on the hardware)
+// because it seems that the XBEE_UART and the JTAG_UART have some conlficts.
+// In order to make the XBEE_UART work properly, in that case the DO_NOT_US_JTAG_UART symbol is defined
+// thus mapping every printf to an empty statement.
+// In this manner the JTAG_UART (where stdout goes by default) is not used.
+// In order to activate this symbol, modify the Makefile setting the ACTIVE_BUILD_CONFIG variable to Release.
+#ifdef DO_NOT_USE_JTAG_UART
+#define printf(f, ...)
+#endif
+
+
 /* 
  * The following #error directive is to remind users that a batch file must be
  * executed prior to this project being built.  The batch file *cannot* be 
