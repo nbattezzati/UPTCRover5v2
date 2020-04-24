@@ -68,17 +68,13 @@ ROVER5/ROVER5.jdi
 ROVER5/ROVER5.pin
 ROVER5/ROVER5.sof
 
-ROVER5/software/Rover5_FreeRTOS/Rover5_FreeRTOS.objdump
+ROVER5/software/Rover5_FreeRTOS/*.objdump
+ROVER5/software/Rover5_FreeRTOS/.force_rebuild
+ROVER5/software/Rover5_FreeRTOS/.force_relink
+ROVER5/software/Rover5_FreeRTOS_bsp/.force_rebuild
 ROVER5/software/Rover5_FreeRTOS_bsp/.force_relink
 ROVER5/software/.metadata/.log
-ROVER5/software/.metadata/.plugins/org.eclipse.cdt.ui/Rover5_FreeRTOS.build.log
-ROVER5/software/.metadata/.plugins/org.eclipse.cdt.ui/global-build.log
-ROVER5/software/.metadata/.plugins/org.eclipse.core.resources/.root/.indexes/properties.index
-ROVER5/software/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.cdt.managedbuilder.core.prefs
-ROVER5/software/.metadata/.plugins/org.eclipse.epp.usagedata.recording/usagedata.csv
-ROVER5/software/.metadata/.plugins/org.eclipse.core.resources/.projects/Rover5_FreeRTOS/.markers
-ROVER5/software/.metadata/.plugins/org.eclipse.core.resources/.root/43.tree
-ROVER5/software/.metadata/.plugins/org.eclipse.epp.usagedata.recording/upload42.csv
+ROVER5/software/.metadata/.plugins/
 
 
 ROVER5/incremental_db/
