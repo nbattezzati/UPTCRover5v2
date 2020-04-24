@@ -6,6 +6,7 @@
  */
 
 #include <stdlib.h>			// for NULL definition
+#include <string.h>			// for memcpy()
 #include <stdbool.h>		// for bool type
 #include <sys/types.h>		// for open() syscall
 #include <sys/stat.h>		// for open() syscall
@@ -24,8 +25,13 @@
 #include "altera_avalon_uart.h"
 
 
+#define COMM_MSG_TRAILING_STR			"\0\r"	// every message ends with this string
+#define COMM_MSG_TRAILING_STR_SIZE		(2)		// size of the string that closes a message
+#define COMM_MAX_MSG_SIZE				(1024)	// max number of bytes in a message
 
-#define MAX_QUEUE_LEN	(8)		// max number of messages in a queue
+#define MAX_QUEUE_LEN					(8)		// max number of messages in a queue
+
+
 
 
 
@@ -41,6 +47,15 @@
 ///    PRIVATE TYPES     ///
 ///                      ///
 ////////////////////////////
+
+// TYPE: comm_msg_t
+// Description: structure used to send a message over a queue
+// Fields:      - len: length of the message
+//              - buf: pointer to the buffer containing the message (dynamically allocated)
+typedef struct {
+	uint16_t	len;
+	uint8_t *	buf;
+} comm_msg_t;
 
 
 ////////////////////////////
@@ -60,6 +75,10 @@ QueueHandle_t tx_queue_ = NULL;
 ///                      ///
 ////////////////////////////
 
+// FUNCTION: string_2_msg()
+// Description: function to create a comm_msg_t from a string of characters (allocating the memory for the message)
+uint16_t string_2_msg(const char * str, uint16_t len, comm_msg_t * msg);
+
 
 ////////////////////////////
 ///                      ///
@@ -68,58 +87,38 @@ QueueHandle_t tx_queue_ = NULL;
 ////////////////////////////
 
 
-// FUNCTION: String2Msg()
-// Description: function to create a comm_msg_t from a string of characters
-uint8_t String2Msg(const char * str, uint8_t len, comm_msg_t * msg)
-{
-	uint8_t target_len = 0;
-	int i = 0;
-
-	// check if the output message structure is not NULL
-	if (msg != NULL) {
-		target_len = (len < COMM_MAX_MSG_SIZE ? len : COMM_MAX_MSG_SIZE) + 1;
-		if ((msg->buf = malloc(target_len)) != NULL) {
-			// copy bytes from the string to the message buffer
-			for (i=0; i<len && i<COMM_MAX_MSG_SIZE; ++i) {
-				msg->buf[i] = str[i];
-			}
-			// set the last character to end the string
-			msg->buf[i] = '\0';
-			// set message length
-			msg->len = target_len;
-
-			printf("[DEBUG] String2Msg: len=%d, msg=%s\n", msg->len, msg->buf);
-		}
-		else {
-			printf("[ERR] failed to allocate memory for msg buffer\n");
-		}
-	}
-	else {
-		printf("[ERR]: String2Msg: msg pointer is NULL\n");
-	}
-
-	return target_len;
-}
-
-
 // FUNCTION: RoverSendMsg()
 // Description: function to send a message over the RF channel to a specific recipient
-int8_t RoverSendMsg(uint8_t to, const comm_msg_t * msg)
+int32_t RoverSendMsg(uint8_t to, const char * str, uint16_t len)
 {
 	uint8_t ret_val = 0;
+	comm_msg_t msg = {0};
+	uint16_t target_len = 0;
 
 	// check if the queue exists
 	if (tx_queue_ != NULL) {
-		// lock the mutex to be sure that nobody else is using the queue
-		xSemaphoreTake(tx_queue_mutex_, portMAX_DELAY);
-		// queue the message if the queue is not full
-		printf("[DEBUG] sending msg to queue: len=%d, msg=%s\n", msg->len, msg->buf);
-		if (xQueueSend(tx_queue_, msg, 0) != pdTRUE) {
-			printf("[ERR] Failed to send message to queue\n");
-			ret_val = COMM_ERR_QUEUE_FULL;
+		// check if the length is ok, otherwise truncate the message
+		target_len = (len < COMM_MAX_MSG_SIZE ? len : COMM_MAX_MSG_SIZE) + COMM_MSG_TRAILING_STR_SIZE;
+		// create the message structure
+		if (string_2_msg(str, target_len, &msg) > 0) {
+			// lock the mutex to be sure that nobody else is using the queue
+			xSemaphoreTake(tx_queue_mutex_, portMAX_DELAY);
+			// queue the message if the queue is not full
+			printf("[DEBUG] sending msg to queue: len=%d, msg=%s\n", msg.len, msg.buf);
+			if (xQueueSend(tx_queue_, &msg, 0) != pdTRUE) {
+				printf("[ERR] Failed to send message to queue\n");
+				free(msg.buf);
+				ret_val = COMM_ERR_QUEUE_FULL;
+			}
+			// release the mutex
+			xSemaphoreGive(tx_queue_mutex_);
 		}
-		// release the mutex
-		xSemaphoreGive(tx_queue_mutex_);
+		else if (len > 0) {
+			ret_val = COMM_ERR_OUT_OF_MEMORY;
+		}
+		else {
+			// len=0, do nothing
+		}
 	}
 	else {
 		printf("[ERR] Cannot send message to a NULL queue\n");
@@ -131,7 +130,7 @@ int8_t RoverSendMsg(uint8_t to, const comm_msg_t * msg)
 
 // FUNCTION: RoverSendBroadcastMsg()
 // Description: function to send a message over the RF channel to all listening recipients
-int8_t RoverSendBroadcastMsg(const comm_msg_t * msg)
+int32_t RoverSendBroadcastMsg(const char * str, uint16_t len)
 {
 	// TODO RoverSendBroadcastMsg()
 	return 0;
@@ -205,4 +204,32 @@ void RoverTaskComm(void *pvParameters)
 ///                      ///
 ////////////////////////////
 
+// FUNCTION: String2Msg()
+// Description: function to create a comm_msg_t from a string of characters (allocating the memory for the message)
+// Parameters:  - str: string containing the message
+//              - len: length of the message
+//              - msg: pointer to a comm_msg_t that will be filled with the message
+// Return:      number of characters copied into the message. If any error occurs return 0
+uint16_t string_2_msg(const char * str, uint16_t len, comm_msg_t * msg)
+{
+	uint16_t ret_val = 0;
 
+	// allocate the buffer
+	if ((msg != NULL) && (len > 0) && ((msg->buf = malloc(len)) != NULL)) {
+		// copy bytes from the string to the message buffer
+		memcpy(msg->buf, str, len-COMM_MSG_TRAILING_STR_SIZE);
+		// set the last character to end the string
+		memcpy(msg->buf+len-COMM_MSG_TRAILING_STR_SIZE, COMM_MSG_TRAILING_STR, COMM_MSG_TRAILING_STR_SIZE);
+		// set message length
+		msg->len = len;
+		// set return value
+		ret_val = msg->len;
+
+		printf("[DEBUG] string_2_msg: len=%d, msg=%s\n", msg->len, msg->buf);
+	}
+	else {
+		printf("[ERR] failed to allocate memory for msg buffer (or msg is NULL)\n");
+	}
+
+	return ret_val;
+}
