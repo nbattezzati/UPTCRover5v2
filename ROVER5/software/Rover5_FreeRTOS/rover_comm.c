@@ -114,7 +114,7 @@ int8_t RoverSendMsg(uint8_t to, const comm_msg_t * msg)
 		xSemaphoreTake(tx_queue_mutex_, portMAX_DELAY);
 		// queue the message if the queue is not full
 		printf("[DEBUG] sending msg to queue: len=%d, msg=%s\n", msg->len, msg->buf);
-		if (xQueueSend(tx_queue_, &msg, 0) != pdTRUE) {
+		if (xQueueSend(tx_queue_, msg, 0) != pdTRUE) {
 			printf("[ERR] Failed to send message to queue\n");
 			ret_val = COMM_ERR_QUEUE_FULL;
 		}
