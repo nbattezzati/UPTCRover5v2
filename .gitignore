@@ -76,7 +76,7 @@ ROVER5/software/Rover5_FreeRTOS_bsp/.force_relink
 ROVER5/software/.metadata/.log
 ROVER5/software/.metadata/.plugins/
 
-
+ROVER5/db/
 ROVER5/incremental_db/
 ROVER5/db/*.cdb
 ROVER5/db/*.hdb
