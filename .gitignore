@@ -132,3 +132,16 @@ ROVER5/ROVER5.pti_db_list.ddb
 ROVER5/ROVER5.tis_db_list.ddb
 ROVER5/Flash_Programming/mainFrame.session.xml
 ROVER5/software/.metadata/.mylyn/repositories.xml.zip
+ROVER5/software/Rover5_FreeRTOS_bsp/alt_sys_init.c
+ROVER5/software/Rover5_FreeRTOS_bsp/linker.h
+ROVER5/software/Rover5_FreeRTOS_bsp/linker.x
+ROVER5/software/Rover5_FreeRTOS_bsp/Makefile
+ROVER5/software/Rover5_FreeRTOS_bsp/mem_init.mk
+ROVER5/software/Rover5_FreeRTOS_bsp/memory.gdb
+ROVER5/software/Rover5_FreeRTOS_bsp/public.mk
+ROVER5/software/Rover5_FreeRTOS_bsp/settings.bsp
+ROVER5/software/Rover5_FreeRTOS_bsp/summary.html
+ROVER5/software/Rover5_FreeRTOS_bsp/system.h
+ROVER5/software/Rover5_FreeRTOS_bsp/script/flash_programmer.sh
+ROVER5/software/Rover5_FreeRTOS_bsp/flash/Rover5_FreeRTOS_EPCS.flash
+ROVER5/software/Rover5_FreeRTOS_bsp/flash/ROVER5_EPCS.flash
