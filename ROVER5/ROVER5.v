@@ -58,6 +58,7 @@ module ROVER5(
 	//////////// GPIO_1, GPIO_1 connect to GPIO Default //////////
 	inout 		    [33:0]		PORT_GPIO_1,
 	input 		     [1:0]		PORT_GPIO_1_IN
+	
 );
 
 
@@ -108,6 +109,11 @@ wire    uart_RXD;
 wire	  left_encoders_count;
 wire	  right_encoders_count;
 
+wire	  [7:0] led_processor;
+wire    [7:0] led_test;
+wire	  [7:0] encoder_inputs;
+wire    [31:0] encoder_counters;
+
 //=======================================================
 //  Structural coding
 //=======================================================
@@ -128,7 +134,7 @@ wire	  right_encoders_count;
 		.epcs_sce      (EPCS_NCSO),      							//        .sce
 		.epcs_sdo      (EPCS_ASDO),      							//        .sdo
 		.epcs_data0    (EPCS_DATA0),    							//        .data0
-		.led_export    (LED),    									//     led.export
+		.led_export    (led_processor),    									//     led.export
 		.sw_export     (SW),     									//      sw.export
 		.key_export    (KEY),    									//     key.export
 		.gps_rxd       (gps_RXD),       							//     gps.RXD
@@ -175,10 +181,12 @@ wire	  right_encoders_count;
 		.flag_i2c_export                (flag_i2c),         //         flag_i2c.export
 		  
 		.uart_rxd                       (uart_RXD),         //             uart.rxd
-		.uart_txd                       (uart_TXD)
+		.uart_txd                       (uart_TXD),
+		.encoder_inputs_export          (encoder_inputs),           //   encoder_inputs.export
+		//.encoder_test_inputs_export     (encoder_inputs),     //   encoder_test_inputs.export
+      //.encoder_test_register_export   (encoder_counters)    // encoder_test_register.export
 	); 
 
-	 
 	PWM u1 (
 		.clk      	(CLOCK_50),       							//     clk.clk
 		.reset_n  	(1'b1), 											//   reset.reset_n
@@ -230,8 +238,10 @@ wire	  right_encoders_count;
 		.RIGHT_COUNT			(right_encoders_count),	//right tick count send to NiosII
 	);
 	
-	assign encoder_int 		= {GPIO_2[11],GPIO_2[7],GPIO_2[8],GPIO_2[4]};
-	assign encoder_normal 	= {GPIO_2[9],GPIO_2[5],GPIO_2[6],GPIO_2[2]};
+	assign encoder_int 		= {GPIO_2[4],GPIO_2[8],GPIO_2[7],GPIO_2[11]};
+	assign encoder_normal 	= {GPIO_2[2],GPIO_2[6],GPIO_2[5],GPIO_2[9]};
+	
+	assign encoder_inputs   = {GPIO_2[8],GPIO_2[6],GPIO_2[4],GPIO_2[2],GPIO_2[9],GPIO_2[11],GPIO_2[5],GPIO_2[7]};
 	
 	assign PORT_GPIO_1[5]  	= dist1_RXD;
 	assign PORT_GPIO_1[9]  	= dist2_RXD;
@@ -267,5 +277,9 @@ wire	  right_encoders_count;
 	assign PORT_GPIO_1[26] 	= motores[3];
 	assign PORT_GPIO_1[24] 	= pwmout2;
 	assign PORT_GPIO_1[22] 	= pwmout2;	
+	
+	assign LED = led_test;
+	//assign LED = led_processor;
+	
 
 endmodule
