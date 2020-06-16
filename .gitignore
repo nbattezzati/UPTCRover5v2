@@ -145,3 +145,6 @@ ROVER5/software/Rover5_FreeRTOS_bsp/system.h
 ROVER5/software/Rover5_FreeRTOS_bsp/script/flash_programmer.sh
 ROVER5/software/Rover5_FreeRTOS_bsp/flash/Rover5_FreeRTOS_EPCS.flash
 ROVER5/software/Rover5_FreeRTOS_bsp/flash/ROVER5_EPCS.flash
+ROVER5/software/Rover5_FreeRTOS/.settings/org.eclipse.cdt.codan.core.prefs
+ROVER5/software/Rover5_FreeRTOS/obj/Release/.force_relink
+ROVER5/software/.metadata/.mylyn/repositories.xml.zip

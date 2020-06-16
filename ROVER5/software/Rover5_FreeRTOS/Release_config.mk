@@ -43,6 +43,9 @@ C_SRCS += Rover5_FreeRTOS.c
 C_SRCS += rover_comm.c
 C_SRCS += rover_sensing.c
 C_SRCS += rover_control.c
+C_SRCS += rover_comm_msgs.c
+C_SRCS += rover_pid.c
+C_SRCS += rover_pose_controller.c
 CXX_SRCS :=
 ASM_SRCS := FreeRTOS/Source/portable/GCC/NiosII/port_asm.S
 

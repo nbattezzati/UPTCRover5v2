@@ -16,9 +16,9 @@
 /*--- Nik END ---*/
 
 /* Task Execution Periods */
-#define RoverTaskComm_PERIOD 	1    // ms
+#define RoverTaskComm_PERIOD 	1     // ms
 #define RoverTaskControl_PERIOD 100  // ms
-#define RoverTaskSensing_PERIOD 1    // ms
+#define RoverTaskSensing_PERIOD 1     // ms
 
 // MACRO: TASK_MS_2_TICKS
 // Description: return the number of ticks for the given amount of time in ms

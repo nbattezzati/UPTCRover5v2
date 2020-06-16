@@ -3,6 +3,7 @@
 	<name>Rover5_FreeRTOS</name>
 	<comment></comment>
 	<projects>
+		<project>Rover5_FreeRTOS_bsp</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

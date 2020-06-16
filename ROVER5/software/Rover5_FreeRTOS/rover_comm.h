@@ -10,6 +10,7 @@
 #ifndef ROVER_COMM_H_
 #define ROVER_COMM_H_
 
+#include "rover_comm_msgs.h"
 
 #define COMM_ERR_OUT_OF_MEMORY		(-1)
 #define COMM_ERR_QUEUE_FULL			(-2)

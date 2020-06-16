@@ -79,9 +79,9 @@ int main( void )
 	//   Name:  let's name tasks T_xxxx
 	//   Stack: let's start with 128 kWords (i.e. 512 kB, since word is 32-bit wide)
 	//   Prio:  keep prio low, let's rise prio only for very hard real time tasks
-	//if (xTaskCreate(RoverTaskComm, "T_comm", 128*configMINIMAL_STACK_SIZE, NULL, TASK_PRIO_LOW, NULL) != pdPASS) {
-	//	printf("[ERR]: failed to create task T_comm\n");
-	//}
+	if (xTaskCreate(RoverTaskComm, "T_comm", 32*configMINIMAL_STACK_SIZE, NULL, TASK_PRIO_LOW, NULL) != pdPASS) {
+		printf("[ERR]: failed to create task T_comm\n");
+	}
 /*--- Nik END ---*/
 
 	/*
