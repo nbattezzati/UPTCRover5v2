@@ -1,13 +1,6 @@
 /*
  * rover_comm_msgs.c
  *
- *  Created on: 5/06/2020
- *      Author: andre
- */
-
-/*
- * rover_comm_msgs.c
- *
  *  Created on: 05/giu/2020
  *      Author: nbattezzati
  */
