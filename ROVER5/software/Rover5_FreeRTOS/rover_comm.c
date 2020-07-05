@@ -85,11 +85,11 @@ uint16_t string_2_msg(const char * str, uint16_t len, comm_msg_t * msg);
 
 // FUNCTION: parse_msg()
 // Description: function to parse received bytes and check if a message can be constructed
-uint16_t parse_msg(char * buf, unsigned int * len, comm_msg_t * msg);
+uint16_t parse_msg(char * buf, unsigned int len, comm_msg_t * msg);
 
 // FUNCTION: dispatch_msg()
 // Description: function to dispatch a message to a receiving queue
-int8_t dispatch_msg(comm_receiver_t receiver, const comm_msg_t * msg);
+int8_t dispatch_msg(comm_receiver_t receiver, comm_msg_t * msg);
 
 
 ////////////////////////////
@@ -101,9 +101,9 @@ int8_t dispatch_msg(comm_receiver_t receiver, const comm_msg_t * msg);
 
 // FUNCTION: RoverSendMsg()
 // Description: function to send a message over the RF channel to a specific recipient
-int32_t RoverSendMsg(uint8_t to, const char * str, uint16_t len)
+int8_t RoverSendMsg(uint8_t to, const char * str, uint16_t len)
 {
-	uint8_t ret_val = 0;
+	int8_t ret_val = 0;
 	comm_msg_t msg = {0};
 	uint16_t target_len = 0;
 
@@ -183,7 +183,7 @@ uint8_t RoverGetMsg(comm_receiver_t receiver, char * str)
 	if ((receiver != NULL) && (uxQueueMessagesWaiting(receiver) > 0)) {
 		// get the message from the queue
 		if (xQueueReceive(receiver, &rx_msg, 0) == pdTRUE) {
-			str = rx_msg.buf;
+			str = (char *)rx_msg.buf;
 			ret_val = rx_msg.len;
 		}
 		else {
@@ -273,7 +273,11 @@ void RoverTaskComm(void *pvParameters)
 		// receive bytes from the UART and push new messages to the RX queue
 		if ((bytes_read = read(uart_rx_fd, rx_buf+rx_offset, RX_BUF_SIZE-rx_offset)) > 0) {
 			rx_offset += bytes_read;
-			while(parse_msg(rx_buf, &rx_offset, &rx_msg) > 0) {
+			// parse the buffer to search and eventually dispatch complete messages
+			while(parse_msg(rx_buf, rx_offset, &rx_msg) > 0) {
+				// update number of valid bytes in the buffer
+				rx_offset -= rx_msg.len;
+				// dispatch message to the registered queues
 				dispatch_msg(rx_queue_, &rx_msg);
 			}
 			if (rx_offset >= RX_BUF_SIZE) {
@@ -283,6 +287,9 @@ void RoverTaskComm(void *pvParameters)
 		}
 		else if (bytes_read < 0) {
 			printf("[ERR] failed to read from UART RX\n");
+		}
+		else {
+			// nothing to read
 		}
 
 		// Wait for the next cycle.
@@ -335,17 +342,17 @@ uint16_t string_2_msg(const char * str, uint16_t len, comm_msg_t * msg)
 // FUNCTION: parse_msg()
 // Description: function to parse received bytes and check if a message can be constructed
 // Parameters:  - buf: buffer containing the bytes received from the UART
-//              - len: pointer to the number of valid bytes within the buffer (will be updated after parsing msgs)
+//              - len: number of valid bytes within the buffer
 //              - msg: pointer to a message structure to be filled with a parsed message
 // Return:      number of bytes in the new message or 0 if no complete messages could be parsed
-uint16_t parse_msg(char * buf, unsigned int * len, comm_msg_t * msg)
+uint16_t parse_msg(char * buf, unsigned int len, comm_msg_t * msg)
 {
 	uint16_t ret_val = 0;
 	int i = 0;
 	int msg_size = RX_BUF_SIZE+1;
 
 	// search for the termination string '\0\r'
-	for (i=0; (i<(*len-1)) && (msg_size>RX_BUF_SIZE); ++i) {
+	for (i=0; (i<(len-1)) && (msg_size>RX_BUF_SIZE); ++i) {
 		if (buf[i] == '\0' && buf[i+1] == '\r') {
 			msg_size = i+COMM_MSG_TRAILING_STR_SIZE;
 		}
@@ -363,9 +370,7 @@ uint16_t parse_msg(char * buf, unsigned int * len, comm_msg_t * msg)
 		}
 
 		// move the bytes following the end of message to the beginning of the buffer
-		memmove(buf, buf+msg_size, *len-(msg_size));
-		// update number of valid bytes in the buffer
-		*len -= msg_size;
+		memmove(buf, buf+msg_size, len-(msg_size));
 
 		// update return value (number of bytes in the new message
 		ret_val = msg->len;
@@ -379,8 +384,28 @@ uint16_t parse_msg(char * buf, unsigned int * len, comm_msg_t * msg)
 // Parameters:  - receiver: pointer to the receiver queue where to dispatch the message
 //              - msg: pointer to the message to be transmitted
 // Return:      0 if msg has been successfully transmitted, < 0 if any error occurred
-int8_t dispatch_msg(comm_receiver_t receiver, const comm_msg_t * msg)
+int8_t dispatch_msg(comm_receiver_t receiver, comm_msg_t * msg)
 {
-	// TODO: dispatch_msg()
-	return 0;
+	int8_t ret_val = 0;
+
+	if (receiver != NULL) {
+		// lock the mutex to be sure that nobody else is using the queue
+//		xSemaphoreTake(rx_queue_mutex_, portMAX_DELAY);
+		// queue the message if the queue is not full
+		printf("[DEBUG] copying msg to RX queue: len=%d, msg=%s\n", msg->len, msg->buf);
+		if (xQueueSend(rx_queue_, &msg, 0) != pdTRUE) {
+			printf("[ERR] Failed to copy message to RX queue\n");
+			free(msg->buf);
+			msg->len = 0;
+			ret_val = COMM_ERR_QUEUE_FULL;
+		}
+		// release the mutex
+//		xSemaphoreGive(rx_queue_mutex_);
+	}
+	else {
+		printf("[ERR] Trying to dispatch message to a NULL receiver\n");
+		ret_val = COMM_ERR_INVALID_RECEIVER;
+	}
+
+	return ret_val;
 }

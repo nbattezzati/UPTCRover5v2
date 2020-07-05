@@ -20,6 +20,7 @@
 #define COMM_ERR_OUT_OF_MEMORY		(-1)
 #define COMM_ERR_QUEUE_FULL			(-2)
 #define COMM_ERR_NO_MORE_RECEIVERS	(-3)
+#define COMM_ERR_INVALID_RECEIVER	(-4)
 
 
 
@@ -33,7 +34,7 @@ typedef QueueHandle_t comm_receiver_t;
 //              - str: string containing the message to send
 //              - len: length of the string (messages longer than COMM_MAX_MSG_SIZE will be truncated)
 // Return:      bytes sent if message is successfully queued, < 0 if failed
-int32_t RoverSendMsg(uint8_t to, const char * str, uint16_t len);
+int8_t RoverSendMsg(uint8_t to, const char * str, uint16_t len);
 
 // FUNCTION: RoverSendBroadcastMsg()
 // Description: function to send a message over the RF channel to all listening recipients
