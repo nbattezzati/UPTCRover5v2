@@ -139,6 +139,10 @@ void RoverTaskControl(void *pvParameters)
 
 	rover_pose_control_params_t params;
 
+	// command reception variables
+	comm_receiver_t cmd_receiver	= NULL;
+	char * command_str				= NULL;
+
 	//printf("Robot ID = 0 - ADSG 2\n");
 
 	/* Set the initial robot position (x, y, theta) */
@@ -184,9 +188,20 @@ void RoverTaskControl(void *pvParameters)
 	IOWR_ALTERA_AVALON_PIO_EDGE_CAP(KEY_BASE, 0x0);
 	alt_irq_register( KEY_IRQ, NULL,(void*)irqkey );
 
+
+	// Register listener for commands
+	cmd_receiver = RoverRegisterMsgReceiver();
+
+
 	while(1){
 
 		//printf("T_control RUNNING\n");
+
+		// check if there is a new command
+		if (RoverGetMsg(cmd_receiver, command_str) > 0) {
+			printf("New COMMAND received: %s\n", command_str);
+			RoverReleaseMsg(command_str);
+		}
 
 		UpdateOdometry(&pose, &delta_enc);
 
