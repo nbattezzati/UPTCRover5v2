@@ -1,13 +1,6 @@
 /*
  * rover_comm_msgs.c
  *
- *  Created on: 5/06/2020
- *      Author: andre
- */
-
-/*
- * rover_comm_msgs.c
- *
  *  Created on: 05/giu/2020
  *      Author: nbattezzati
  */
@@ -22,7 +15,7 @@
 
 volatile uint32_t _comm_msg_cnt = 0;
 
-int32_t RoverSendMsg(uint8_t to, const char * str, uint16_t len);
+int8_t RoverSendMsg(uint8_t to, const char * str, uint16_t len);
 
 
 typedef enum {
@@ -34,7 +27,7 @@ typedef enum {
 
 
 
-int32_t RoverSendMsg_MOTOR_TELEM(uint8_t from, uint8_t to, int32_t v1, int32_t v2, int32_t c1, int32_t c2)
+int8_t RoverSendMsg_MOTOR_TELEM(uint8_t from, uint8_t to, int32_t v1, int32_t v2, int32_t c1, int32_t c2)
 {
 	char _msg_str[COMM_MSG_HEADER_LEN+COMM_MSG_LEN_MOTOR_TELEM];
 	uint16_t len = sprintf(_msg_str,
@@ -44,7 +37,7 @@ int32_t RoverSendMsg_MOTOR_TELEM(uint8_t from, uint8_t to, int32_t v1, int32_t v
 	return RoverSendMsg(to, _msg_str, len);
 }
 
-int32_t RoverSendMsg_CONTROL_OUTPUT(uint8_t from, uint8_t to, int32_t x, int32_t y, float t, int32_t lv, float av, int32_t xe, int32_t ye, float te)
+int8_t RoverSendMsg_CONTROL_OUTPUT(uint8_t from, uint8_t to, int32_t x, int32_t y, float t, int32_t lv, float av, int32_t xe, int32_t ye, float te)
 {
 	char _msg_str[COMM_MSG_HEADER_LEN+COMM_MSG_LEN_CONTROL_OUTPUT];
 	uint16_t len = sprintf(_msg_str,
