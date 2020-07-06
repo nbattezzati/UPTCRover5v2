@@ -38,8 +38,8 @@
 /* Constants defined by the mobile robot model */
 #define R_WHEEL_ONLY		30						//radius of the wheel in mm
 #define R_TRACKED			117.5					//radius of the belt in mm
-#define N					83.3333					//number of ticks per revolution in the encoder 250/3
-#define L_WHEEL_SEPARATION	155						//wheel separation in mm
+#define N					333.3333				//number of ticks per revolution in the encoder 1000/3
+#define L_WHEEL_SEPARATION	190						//wheel separation in mm
 #define MM_PER_TICK			(2*M_PI*R_WHEEL_ONLY)/N	//mm traveled each tick
 
 /* Controller parameters */
@@ -76,12 +76,6 @@
 ///                      ///
 ////////////////////////////
 
-/* Control variables */
-float set_linear_velocity=0, theta_desired = 0;
-
-/* Robot velocites */
-float linear_velocity=0, angular_velocity = 0;
-
 /* FPGA variables */
 unsigned char led_val = 0;
 unsigned char sw_val = 0;
@@ -108,6 +102,7 @@ typedef enum{
 	RoverDirection_Left 		= 0x39,
 	RoverDirection_Backwards 	= 0x3A
 } rover_direction_t;
+
 ////////////////////////////
 ///                      ///
 /// FUNCTION PROTOTYPES  ///
@@ -117,7 +112,7 @@ typedef enum{
 void SetMobileRobotVelocity(rover_velocities_t * velocities, rover_wheel_velocities_t * wheel_velocities, rover_direction_t * direction);
 void UpdateOdometry(rover_pose_t * pose, rover_encoders_t * delta_enc);
 static void irqkey (void * context, alt_u32 id);
-void PrintStatus (uint8_t opt_to_print, const rover_pose_t * pose, const rover_encoders_t * enc);
+void PrintStatus (uint8_t opt_to_print, rover_pose_t * pose, rover_pose_t * pose_error, rover_encoders_t * enc, rover_velocities_t * velocities);
 
 ////////////////////////////
 ///                      ///
@@ -131,6 +126,7 @@ void PrintStatus (uint8_t opt_to_print, const rover_pose_t * pose, const rover_e
 void RoverTaskControl(void *pvParameters)
 {
 	uint8_t msg_period = 0;
+	uint8_t move_period = 0;
 
 	TickType_t last_wakeup_time = 0;
 
@@ -152,14 +148,13 @@ void RoverTaskControl(void *pvParameters)
 
 	/* Initialise PID controller */
 	rover_PID_const_t pid = { PID_KP, PID_KI, -PID_KD, PID_TAU, PID_LIM_MIN, PID_LIM_MAX, SAMPLE_TIME_S };
-	PIDControl_Init(&pid);
-	rover_PID_const_t pid_params;
-	params.pid = &pid_params;
+	params.pid = &pid;
 	PoseController_Init(RoverPoseControl_PID, &params);
 
 	/* Initialise Lyapunov controller */
-	//TODO
-
+	rover_lyapunov_const_t lyapunov = {1, 1, 1, 1};
+	params.lyapunov = &lyapunov;
+	PoseController_Init(RoverPoseControl_Lyapunov, &params);
 	/* Set the constants for the Lyapunov Control function (K1, K2, Q1, Q2) */
 	//rover_lyapunov_const_t lyapunov_const = {0.5, 0.5, 0, 0.5};
 
@@ -175,10 +170,6 @@ void RoverTaskControl(void *pvParameters)
 	/* Create a variable that holds the cumulative variation of the encoders averaged on the two wheels */
 	rover_encoders_t delta_enc = {0};
 
-	/* Define the required variables for control */
-	//theta_desired = - M_PI_2;
-	//set_linear_velocity = 5.5;
-
 	/* Register the FPGA Key interrupt service routine */
 	IOWR_ALTERA_AVALON_PIO_IRQ_MASK(KEY_BASE, 0x3);				//KEY FPGA
 	IOWR_ALTERA_AVALON_PIO_EDGE_CAP(KEY_BASE, 0x0);
@@ -191,20 +182,17 @@ void RoverTaskControl(void *pvParameters)
 		UpdateOdometry(&pose, &delta_enc);
 
 		/* Set the desired control function */
-		PoseController_Run(RoverPoseControl_PID, &params, &pose, &desired_pose, &pose_error, &velocities);
+		//PoseController_Run(RoverPoseControl_Lyapunov, &params, &pose, &desired_pose, &pose_error, &velocities);
 
-		//linear_velocity = set_linear_velocity;
+		//SetMobileRobotVelocity(&velocities, &wheel_velocities, &direction);
 
-		SetMobileRobotVelocity(&velocities, &wheel_velocities, &direction);
-
-		IOWR(MOTORES_BASE,0,RoverDirection_Forward);
-		IOWR(PWM1_BASE,0,255);
-		IOWR(PWM2_BASE,0,255);
-
+		//IOWR(MOTORES_BASE,0,RoverDirection_Forward);
+		//IOWR(PWM1_BASE,0,255);
+		//IOWR(PWM2_BASE,0,255);
 
 		/* Wait for 10 control periods to send a message */
 		if (msg_period == 10){
-			PrintStatus(ODOMETRY_VALUES,  &pose, &delta_enc);
+			PrintStatus(ODOMETRY_VALUES, &pose, &pose_error, &delta_enc, &velocities);
 			msg_period = 0;
 		}
 		++msg_period;
@@ -224,8 +212,8 @@ void RoverTaskControl(void *pvParameters)
 
 void SetMobileRobotVelocity(rover_velocities_t * velocities, rover_wheel_velocities_t * wheel_velocities, rover_direction_t * direction){
 
-	wheel_velocities->left = ((2*velocities->v)-(velocities->w*L_WHEEL_SEPARATION))/(2*R_WHEEL_ONLY);
-	wheel_velocities->right = ((2*velocities->w)+(velocities->w*L_WHEEL_SEPARATION))/(2*R_WHEEL_ONLY);
+	wheel_velocities->left = 1*(((2*velocities->v)-(velocities->w*L_WHEEL_SEPARATION))/(2*R_WHEEL_ONLY));
+	wheel_velocities->right = 1*(((2*velocities->w)+(velocities->w*L_WHEEL_SEPARATION))/(2*R_WHEEL_ONLY));
 
 	if (wheel_velocities->left >= 0 && wheel_velocities->right >= 0){
 		*direction = RoverDirection_Forward;
@@ -253,6 +241,10 @@ void SetMobileRobotVelocity(rover_velocities_t * velocities, rover_wheel_velocit
 	//}else if (left_wheel_velocity_normal < 50){
 	//	left_wheel_velocity_normal = 0;
 	}
+
+	IOWR(MOTORES_BASE,0,*direction);
+	IOWR(PWM1_BASE,0,wheel_velocities->right);
+	IOWR(PWM2_BASE,0,wheel_velocities->left);
 }
 
 void UpdateOdometry(rover_pose_t * pose, rover_encoders_t * delta_enc)
@@ -267,8 +259,8 @@ void UpdateOdometry(rover_pose_t * pose, rover_encoders_t * delta_enc)
 	volatile uint32_t encoder_ip = IORD(ENCODER_READING_BASE,0);
 	int8_t cur_right_enc2 = ((encoder_ip>>0)  & 0x000000FF);
 	//int8_t cur_right_enc1 = ((encoder_ip>>8)  & 0x000000FF);
-	//int8_t cur_left_enc2  = ((encoder_ip>>16) & 0x000000FF);
-	int8_t cur_left_enc1  = ((encoder_ip>>24) & 0x000000FF);
+	int8_t cur_left_enc2  = ((encoder_ip>>16) & 0x000000FF);
+	//int8_t cur_left_enc1  = ((encoder_ip>>24) & 0x000000FF);
 
 	//printf("Encoder ip value: 0x%.8x \n", encoder_ip);
 	//printf("Encoder values: l1 %d, l2 %d, r1 %d r2 %d \n", cur_left_enc1, cur_left_enc2, cur_right_enc1, cur_right_enc2);
@@ -277,7 +269,7 @@ void UpdateOdometry(rover_pose_t * pose, rover_encoders_t * delta_enc)
 	 *	Update the cumulative encoders
 	 */
 	delta_enc->right	= cur_right_enc2;
-	delta_enc->left 	= cur_left_enc1;
+	delta_enc->left 	= - cur_left_enc2;
 
 	/*
 	 *	Compute Dl, Dr and Dc
@@ -318,10 +310,13 @@ void UpdateOdometry(rover_pose_t * pose, rover_encoders_t * delta_enc)
 **																		**
 **************************************************************************
 *************************************************************************/
-void PrintStatus (uint8_t opt_to_print, const rover_pose_t * pose, const rover_encoders_t * enc)
+void PrintStatus (uint8_t opt_to_print, rover_pose_t * pose, rover_pose_t * pose_error, rover_encoders_t * enc, rover_velocities_t * velocities)
 {
+  char str [255];
   if (opt_to_print == ENCODER_VALUES){
     printf("rigthEnc: %d - leftEnc: %d ", (int)enc->right, (int)enc->left);
+    uint16_t n = sprintf(str, "rigthEnc: %d - leftEnc: %d ", (int)enc->right, (int)enc->left);
+    RoverSendMsg(1, str, n);
   }
   else if (opt_to_print == ODOMETRY_VALUES){
     printf("Error theta: %f \n ",error_theta);
@@ -330,8 +325,8 @@ void PrintStatus (uint8_t opt_to_print, const rover_pose_t * pose, const rover_e
     printf("theta: %f \n ",pose->theta);
     RoverSendMsg_CONTROL_OUTPUT(1,0,
         pose->x, pose->y, pose->theta,
-        linear_velocity,angular_velocity,
-        0, 0, 0);
+        velocities->v,velocities->w,
+        pose_error->x, pose_error->y, pose_error->theta);
   }
   else if (opt_to_print == VELOCITY_VALUES){
     printf("Linear velocity: %f \n ",linear_velocity);
