@@ -222,21 +222,6 @@ wire    [31:0] encoder_counters;
 		.sda       (GPIO_2[12]),                    			//serial data output of i2c bus    
 		.scl       (GPIO_2[10])                   				//serial clock output of i2c bus
 	);
-
-	ENCODER_READING u4 (
-		.CHANNEL_A_RIGHT_1	(encoder_normal[2]),		//GPIO_2  [5]	 
-		.CHANNEL_A_RIGHT_2 	(encoder_normal[3]), 	//GPIO_2  [9]
-		.CHANNEL_A_LEFT_1		(encoder_int[0]), 		//GPIO_2  [4] 		
-		.CHANNEL_A_LEFT_2 	(encoder_int[1]), 		//GPIO_2  [8]
-		.CHANNEL_B_RIGHT_1 	(encoder_int[2]), 		//GPIO_2  [7] 
-		.CHANNEL_B_RIGHT_2 	(encoder_int[3]),			//GPIO_2 [11]
-		.CHANNEL_B_LEFT_1		(encoder_normal[0]), 	//GPIO_2  [2]		
-		.CHANNEL_B_LEFT_2 	(encoder_normal[1]), 	//GPIO_2  [6]	 
-      .reset 					(1'b0),						//set to '0'
-      .enable					(1'b1),						//set to '1'
-      .LEFT_COUNT				(left_encoders_count),	//left tick count send to NiosII	 		
-		.RIGHT_COUNT			(right_encoders_count),	//right tick count send to NiosII
-	);
 	
 	assign encoder_int 		= {GPIO_2[4],GPIO_2[8],GPIO_2[7],GPIO_2[11]};
 	assign encoder_normal 	= {GPIO_2[2],GPIO_2[6],GPIO_2[5],GPIO_2[9]};
