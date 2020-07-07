@@ -174,7 +174,7 @@ comm_receiver_t RoverRegisterMsgReceiver()
 
 // FUNCTION: RoverGetMsg()
 // Description: function used to get a message (if any)
-uint8_t RoverGetMsg(comm_receiver_t receiver, char * str)
+uint8_t RoverGetMsg(comm_receiver_t receiver, char ** str)
 {
 	uint8_t ret_val = 0;
 	comm_msg_t rx_msg = {0};
@@ -183,7 +183,7 @@ uint8_t RoverGetMsg(comm_receiver_t receiver, char * str)
 	if ((receiver != NULL) && (uxQueueMessagesWaiting(receiver) > 0)) {
 		// get the message from the queue
 		if (xQueueReceive(receiver, &rx_msg, 0) == pdTRUE) {
-			str = (char *)rx_msg.buf;
+			*str = (char *)rx_msg.buf;
 			ret_val = rx_msg.len;
 		}
 		else {
@@ -286,6 +286,7 @@ void RoverTaskComm(void *pvParameters)
 			}
 		}
 		else if (bytes_read < 0) {
+			// TODO: check if the queue was not empty by errno
 			printf("[ERR] failed to read from UART RX\n");
 		}
 		else {
@@ -352,7 +353,7 @@ uint16_t parse_msg(char * buf, unsigned int len, comm_msg_t * msg)
 	int msg_size = RX_BUF_SIZE+1;
 
 	// search for the termination string '\0\r'
-	for (i=0; (i<(len-1)) && (msg_size>RX_BUF_SIZE); ++i) {
+	for (i=0; (i<((int)len-1)) && (msg_size>RX_BUF_SIZE); ++i) {
 		if (buf[i] == '\0' && buf[i+1] == '\r') {
 			msg_size = i+COMM_MSG_TRAILING_STR_SIZE;
 		}
@@ -393,7 +394,7 @@ int8_t dispatch_msg(comm_receiver_t receiver, comm_msg_t * msg)
 //		xSemaphoreTake(rx_queue_mutex_, portMAX_DELAY);
 		// queue the message if the queue is not full
 		printf("[DEBUG] copying msg to RX queue: len=%d, msg=%s\n", msg->len, msg->buf);
-		if (xQueueSend(rx_queue_, &msg, 0) != pdTRUE) {
+		if (xQueueSend(receiver, msg, 0) != pdTRUE) {
 			printf("[ERR] Failed to copy message to RX queue\n");
 			free(msg->buf);
 			msg->len = 0;

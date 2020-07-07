@@ -55,7 +55,7 @@ comm_receiver_t RoverRegisterMsgReceiver();
 //              - str: a pointer that will be filled with a new message
 //                    (to delete after usage calling the RoverReleaseMsg() function)
 // Return:      the number of bytes in the message or 0 if there are no messages
-uint8_t RoverGetMsg(comm_receiver_t receiver, char * str);
+uint8_t RoverGetMsg(comm_receiver_t receiver, char ** str);
 
 // FUNCTION: RoverReleaseMsg()
 // Description: function to release the memory associated to a received message
