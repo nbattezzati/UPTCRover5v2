@@ -55,9 +55,8 @@
 #define SAMPLE_TIME_S 0.01f
 
 /* Print Status Options */
-#define ENCODER_VALUES		0x00
+#define TELEMETRY_VALUES	0x00
 #define ODOMETRY_VALUES		0x01
-#define VELOCITY_VALUES		0x02
 
 /* Macro for the encoder ticks average*/
 #define ENCODER_AVERAGE(ENC_VALUE_1, ENC_VALUE_2) ((ENC_VALUE_1+ENC_VALUE_2)/2)
@@ -92,6 +91,13 @@ typedef struct {
 } rover_encoders_t;
 
 typedef struct {
+	int32_t r1;
+	int32_t r2;
+	int32_t l1;
+	int32_t l2;
+} rover_encoders_raw_t;
+
+typedef struct {
 	float right;
 	float left;
 } rover_wheel_velocities_t;
@@ -110,9 +116,9 @@ typedef enum{
 ////////////////////////////
 
 void SetMobileRobotVelocity(rover_velocities_t * velocities, rover_wheel_velocities_t * wheel_velocities, rover_direction_t * direction);
-void UpdateOdometry(rover_pose_t * pose, rover_encoders_t * delta_enc);
+void UpdateOdometry(rover_pose_t * pose, rover_encoders_t * delta_enc, rover_encoders_raw_t * enc_raw);
 static void irqkey (void * context, alt_u32 id);
-void PrintStatus (uint8_t opt_to_print, rover_pose_t * pose, rover_pose_t * pose_error, rover_encoders_t * enc, rover_velocities_t * velocities);
+void PrintStatus (uint8_t opt_to_print, rover_pose_t * pose, rover_pose_t * pose_error, rover_encoders_raw_t * enc, rover_velocities_t * velocities, rover_wheel_velocities_t * wheel_velocities);
 
 ////////////////////////////
 ///                      ///
@@ -173,6 +179,8 @@ void RoverTaskControl(void *pvParameters)
 
 	/* Create a variable that holds the cumulative variation of the encoders averaged on the two wheels */
 	rover_encoders_t delta_enc = {0};
+	/* ... and also the raw values for each encoder */
+	rover_encoders_raw_t enc_raw = {0};
 
 	/* Register the FPGA Key interrupt service routine */
 	IOWR_ALTERA_AVALON_PIO_IRQ_MASK(KEY_BASE, 0x3);				//KEY FPGA
@@ -189,12 +197,12 @@ void RoverTaskControl(void *pvParameters)
 		//printf("T_control RUNNING\n");
 
 		// check if there is a new command
-		if (RoverGetMsg(cmd_receiver, command_str) > 0) {
+		if (RoverGetMsg(cmd_receiver, &command_str) > 0) {
 			printf("New COMMAND received: %s\n", command_str);
 			RoverReleaseMsg(command_str);
 		}
 
-		UpdateOdometry(&pose, &delta_enc);
+		UpdateOdometry(&pose, &delta_enc, &enc_raw);
 
 		/* Set the desired control function */
 		//PoseController_Run(RoverPoseControl_Lyapunov, &params, &pose, &desired_pose, &pose_error, &velocities);
@@ -207,7 +215,7 @@ void RoverTaskControl(void *pvParameters)
 
 		/* Wait for 10 control periods to send a message */
 		if (msg_period == 10){
-			PrintStatus(ODOMETRY_VALUES, &pose, &pose_error, &delta_enc, &velocities);
+			PrintStatus(ODOMETRY_VALUES, &pose, &pose_error, &enc_raw, &velocities, &wheel_velocities);
 			msg_period = 0;
 		}
 		++msg_period;
@@ -262,7 +270,7 @@ void SetMobileRobotVelocity(rover_velocities_t * velocities, rover_wheel_velocit
 	IOWR(PWM2_BASE,0,wheel_velocities->left);
 }
 
-void UpdateOdometry(rover_pose_t * pose, rover_encoders_t * delta_enc)
+void UpdateOdometry(rover_pose_t * pose, rover_encoders_t * delta_enc, rover_encoders_raw_t * enc_raw)
 {
 	rover_pose_t pose_dt = {0};
 
@@ -272,10 +280,10 @@ void UpdateOdometry(rover_pose_t * pose, rover_encoders_t * delta_enc)
 	float Dc=0;
 
 	volatile uint32_t encoder_ip = IORD(ENCODER_READING_BASE,0);
-	int8_t cur_right_enc2 = ((encoder_ip>>0)  & 0x000000FF);
-	//int8_t cur_right_enc1 = ((encoder_ip>>8)  & 0x000000FF);
-	int8_t cur_left_enc2  = ((encoder_ip>>16) & 0x000000FF);
-	//int8_t cur_left_enc1  = ((encoder_ip>>24) & 0x000000FF);
+	enc_raw->r2 = ((encoder_ip>>0)  & 0x000000FF);
+	enc_raw->r1 = ((encoder_ip>>8)  & 0x000000FF);
+	enc_raw->l2  = ((encoder_ip>>16) & 0x000000FF);
+	enc_raw->l1  = ((encoder_ip>>24) & 0x000000FF);
 
 	//printf("Encoder ip value: 0x%.8x \n", encoder_ip);
 	//printf("Encoder values: l1 %d, l2 %d, r1 %d r2 %d \n", cur_left_enc1, cur_left_enc2, cur_right_enc1, cur_right_enc2);
@@ -283,8 +291,8 @@ void UpdateOdometry(rover_pose_t * pose, rover_encoders_t * delta_enc)
 	/*
 	 *	Update the cumulative encoders
 	 */
-	delta_enc->right	= cur_right_enc2;
-	delta_enc->left 	= - cur_left_enc2;
+	delta_enc->right	= enc_raw->r2;
+	delta_enc->left 	= - enc_raw->l2;
 
 	/*
 	 *	Compute Dl, Dr and Dc
@@ -325,30 +333,28 @@ void UpdateOdometry(rover_pose_t * pose, rover_encoders_t * delta_enc)
 **																		**
 **************************************************************************
 *************************************************************************/
-void PrintStatus (uint8_t opt_to_print, rover_pose_t * pose, rover_pose_t * pose_error, rover_encoders_t * enc, rover_velocities_t * velocities)
+void PrintStatus (
+	uint8_t opt_to_print,
+	rover_pose_t * pose,
+	rover_pose_t * pose_error,
+	rover_encoders_raw_t * enc,
+	rover_velocities_t * velocities,
+	rover_wheel_velocities_t * wheel_velocities)
 {
-  char str [255];
-  if (opt_to_print == ENCODER_VALUES){
-    printf("rigthEnc: %d - leftEnc: %d ", (int)enc->right, (int)enc->left);
-    uint16_t n = sprintf(str, "rigthEnc: %d - leftEnc: %d ", (int)enc->right, (int)enc->left);
-    RoverSendMsg(1, str, n);
+  if (opt_to_print == TELEMETRY_VALUES){
+    RoverSendMsg_MOTOR_TELEM(1,0,
+    	wheel_velocities->left, wheel_velocities->right,
+    	0, 0, /* TODO: get motor currents */
+    	enc->l1, enc->l2, enc->r1, enc->r2);
   }
   else if (opt_to_print == ODOMETRY_VALUES){
-    printf("Error theta: %f \n ",error_theta);
-    printf("x: %f \n ",pose->x);
-    printf("y: %f \n ",pose->y);
-    printf("theta: %f \n ",pose->theta);
     RoverSendMsg_CONTROL_OUTPUT(1,0,
         pose->x, pose->y, pose->theta,
         velocities->v,velocities->w,
         pose_error->x, pose_error->y, pose_error->theta);
   }
-  else if (opt_to_print == VELOCITY_VALUES){
-    printf("Linear velocity: %f \n ",linear_velocity);
-    printf("Angular velocity: %f \n ",angular_velocity);
-  }
   else {
-     printf("Not specified values!");
+     printf("[ERR] Unknown print option (%d)!\n", opt_to_print);
   }
 }
 
